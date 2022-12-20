@@ -1,0 +1,63 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+# Enable hardening build flags
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+include /usr/share/dpkg/pkg-info.mk
+
+UPSTREAM_VERSION = $(shell echo $(DEB_VERSION_UPSTREAM) | sed -e 's/\+.*//')
+
+DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+
+# see FTBFS #649302
+ifeq ($(DEB_HOST_ARCH),powerpc)
+EPSG := --disable-epsg
+else
+EPSG :=
+endif
+
+# Verbose test output
+export VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		$(EPSG) \
+		--disable-examples \
+		--enable-gcp=yes \
+		--enable-geos \
+		--enable-proj \
+		--enable-rttopo=yes
+
+override_dh_auto_test:
+	mkdir -p debian/backup/stmt
+	cp test/*.sqlite debian/backup/
+	cp test/sql_stmt_tests/*.sqlite debian/backup/stmt/
+
+	dh_auto_test --max-parallel=1 || echo "Ignoring test failures"
+
+	cp debian/backup/stmt/*.sqlite test/sql_stmt_tests/
+	cp debian/backup/*.sqlite test/
+	rm -rf debian/backup
+
+override_dh_makeshlibs:
+	dh_makeshlibs -- -v$(UPSTREAM_VERSION)
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l/usr/lib:$(CURDIR)/debian/tmp/usr/lib
+
+override_dh_strip:
+	dh_strip --dbgsym-migration='libspatialite-dbg (<< 4.3.0a-6~)'
+
+override_dh_install:
+	$(RM) debian/*/usr/lib/*/*.la
+	dh_install --list-missing

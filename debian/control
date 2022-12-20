@@ -1,0 +1,80 @@
+Source: spatialite
+Maintainer: Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>
+Uploaders: Francesco Paolo Lovergine <frankie@debian.org>,
+           David Paleino <dapal@debian.org>,
+           Bas Couwenberg <sebastic@debian.org>
+Section: science
+Priority: optional
+Build-Depends: debhelper (>= 10~),
+               libexpat1-dev,
+               libfreexl-dev,
+               libgeos-dev (>= 3.5.0),
+               libminizip-dev,
+               libproj-dev,
+               libreadline-dev,
+               librttopo-dev (>= 1.1.0),
+               libsqlite3-dev,
+               libxml2-dev,
+               pkg-config,
+               zlib1g-dev
+Standards-Version: 4.5.1
+Vcs-Browser: https://salsa.debian.org/debian-gis-team/spatialite
+Vcs-Git: https://salsa.debian.org/debian-gis-team/spatialite.git
+Homepage: https://www.gaia-gis.it/fossil/libspatialite
+
+Package: libspatialite7
+Architecture: any
+Multi-Arch: same
+Section: libs
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Breaks: spatialite-bin (<< 3.0.0-1~)
+Description: Geospatial extension for SQLite - libraries
+ The SpatiaLite extension enables SQLite to support spatial (geometry) data
+ in a way conformant to OpenGis specifications, with both WKT and WKB formats.
+ .
+ Spatialite also includes Virtualshape and Virtualtext to enable accessing
+ shapefiles and csv/text files as virtual tables.
+ .
+ This package contains all shared libraries used by Spatialite based programs.
+
+Package: libspatialite-dev
+Architecture: any
+Multi-Arch: same
+Section: libdevel
+Depends: libspatialite7 (= ${binary:Version}),
+         libfreexl-dev,
+         libgeos-dev,
+         libminizip-dev,
+         libproj-dev,
+         libsqlite3-dev,
+         librttopo-dev,
+         libxml2-dev,
+         zlib1g-dev,
+         ${misc:Depends}
+Recommends: pkg-config
+Description: Geospatial extension for SQLite - development files
+ The SpatiaLite extension enables SQLite to support spatial (geometry) data
+ in a way conformant to OpenGis specifications, with both WKT and WKB formats.
+ .
+ Spatialite also includes Virtualshape and Virtualtext to enable accessing
+ shapefiles and csv/text files as virtual tables.
+ .
+ This package contains development files (static libraries and header files).
+
+Package: libsqlite3-mod-spatialite
+Architecture: any
+Multi-Arch: same
+Section: libs
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Description: Geospatial extension for SQLite - loadable module
+ The SpatiaLite extension enables SQLite to support spatial (geometry) data
+ in a way conformant to OpenGis specifications, with both WKT and WKB formats.
+ .
+ Spatialite also includes Virtualshape and Virtualtext to enable accessing
+ shapefiles and csv/text files as virtual tables.
+ .
+ This package contains the loadable extension module for SQLite 3.
